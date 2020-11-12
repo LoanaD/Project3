@@ -11,10 +11,23 @@ from os.path import getsize, join
 from time import time
 
 # noinspection PyUnresolvedReferences
+from typing import List, Any
+
 from p1utils import all_files, compare
 
 
 def search(file_list):
+    lol = []
+    while file_list:
+        a = file_list.pop()
+        l = []
+        for x in range(len(file_list) - 1, -1, -1):
+            if compare(a, file_list[x]):
+                l.append(file_list.pop(x))
+        if len(l) > 0:
+            l.append(a)
+            lol.append(l)
+    return lol
 
     """Looking for duplicate files in the provided list of files
 
