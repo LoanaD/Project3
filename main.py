@@ -2,8 +2,8 @@
     Searches deep inside a directory structure, looking for duplicate file.
     Duplicates aka copies have the same content, but not necessarily the same name.
 """
-__author__ = ""
-__email__ = ""
+__author__ = "Loana Davis"
+__email__ = "DAVISL41@my.erau.edu"
 __version__ = "1.0"
 
 # noinspection PyUnresolvedReferences
@@ -42,7 +42,6 @@ def search(file_list):
     return lol
 
 
-
 def faster_search(file_list):
     """Looking for duplicate files in the provided list of files
     :returns a list of lists, where each list contains files with the same content
@@ -51,9 +50,16 @@ def faster_search(file_list):
     Therefore, let's optimize and try to call it a little less often.
     """
     lol = []
-    #
-    # ...
-    #
+    file_sizes = list(map(getsize, file_list))
+    file_list = list(filter(lambda file: 1 < file_sizes.count(getsize(file)), file_list))
+
+    while 0 < len(file_list):
+        duplicate = [file_list.pop(0)]
+        for i in range(len(file_list) - 1, -1, -1):
+            if compare(duplicate[0], file_list[i]):
+                duplicate.append(file_list.pop(i))
+        if 1 < len(duplicate):
+            lol.append(duplicate)
     return lol
 
 
@@ -69,8 +75,8 @@ def report(lol):
     if 0 < len(lol):
         large = max(lol, key=len)
         large.sort()
-        print(f"The file with the most duplicates is: {large[0]}")
-        print(f"There are {len(large) - 1} copies.")
+        print(f"The file with the most duplicates is: \n {large[0]}")
+        print(f"Here are its {len(large) - 1} copies.")
         for x in range(1, len(large)):
             print(large[x])
 
@@ -79,9 +85,11 @@ def report(lol):
 
         print(f"\nThe most disk space ({(len(large) - 1) * getsize(large[0])}) could be recovered, by deleting copies "
               f"of this file:\n {large[0]}")
-        print(f"here are its copies {len(large) - 1}")
+        print(f""
+              f"Here are its {len(large) - 1} copies")
         for x in range(1, len(large)):
             print(large[x])
+        print("\n")
     else:
         print("No duplicates found")
 
