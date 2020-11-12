@@ -17,6 +17,18 @@ from p1utils import all_files, compare
 
 
 def search(file_list):
+    """Looking for duplicate files in the provided list of files
+
+       :returns a list of lists, where each list contains files with the same content
+
+       Basic search strategy goes like this:
+       - until the provided list is empty.
+       - remove the 1st item from the provided file_list
+       - search for its duplicates in the remaining list and put the item and all its duplicates into a new list
+       - if that new list has more than one item (i.e. we did find duplicates) save the list in the list of lists
+       As a result we have a list, each item of that list is a list,
+       each of those lists contains files that have the same content
+       """
     lol = []
     while file_list:
         a = file_list.pop()
@@ -29,23 +41,6 @@ def search(file_list):
             lol.append(l)
     return lol
 
-    """Looking for duplicate files in the provided list of files
-
-    :returns a list of lists, where each list contains files with the same content
-
-    Basic search strategy goes like this:
-    - until the provided list is empty.
-    - remove the 1st item from the provided file_list
-    - search for its duplicates in the remaining list and put the item and all its duplicates into a new list
-    - if that new list has more than one item (i.e. we did find duplicates) save the list in the list of lists
-    As a result we have a list, each item of that list is a list,
-    each of those lists contains files that have the same content
-    """
-    lol = []
-    #
-    # ...
-    #
-    return lol
 
 
 def faster_search(file_list):
@@ -71,10 +66,24 @@ def report(lol):
     - list where the items require the largest amount or disk-space
     """
     print("== == Duplicate File Finder Report == ==")
-    # if .... :
-    print("The file with the most duplicates is: ")
-    # else:
-    #     print("No duplicates found")
+    if 0 < len(lol):
+        large = max(lol, key=len)
+        large.sort()
+        print(f"The file with the most duplicates is: {large[0]}")
+        print(f"There are {len(large) - 1} copies.")
+        for x in range(1, len(large)):
+            print(large[x])
+
+        large = max(lol, key=lambda a: len(a) * getsize(a[0]))
+        large.sort()
+
+        print(f"\nThe most disk space ({(len(large) - 1) * getsize(large[0])}) could be recovered, by deleting copies "
+              f"of this file:\n {large[0]}")
+        print(f"here are its copies {len(large) - 1}")
+        for x in range(1, len(large)):
+            print(large[x])
+    else:
+        print("No duplicates found")
 
 
 if __name__ == '__main__':
